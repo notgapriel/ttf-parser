@@ -10,6 +10,8 @@
 #pragma once
 
 #include <stdint.h>
+
+#include <cstring>
 #include <map>
 #include <unordered_map>
 #include <vector>
@@ -99,7 +101,7 @@ namespace TTFFontParser {
 		uint32_t length;
 
 		uint32_t parse(const char* data, uint32_t offset) {
-			get4b(&tag, data + offset); memcpy(tagstr, data + offset, sizeof(uint32_t)); tagstr[4] = 0; offset += sizeof(uint32_t);
+			get4b(&tag, data + offset); std::memcpy(tagstr, data + offset, sizeof(uint32_t)); tagstr[4] = 0; offset += sizeof(uint32_t);
 			get4b(&checkSum, data + offset); offset += sizeof(uint32_t);
 			get4b(&offsetPos, data + offset); offset += sizeof(uint32_t);
 			get4b(&length, data + offset); offset += sizeof(uint32_t);
@@ -219,7 +221,7 @@ namespace TTFFontParser {
 				if (nameRecord[i].nameID > max_number_of_names)
 					continue;
 				char* new_name_string = new char[nameRecord[i].length];
-				memcpy(new_name_string, data + offset_start + stringOffset + nameRecord[i].offset_value, sizeof(char) * nameRecord[i].length);
+				std::memcpy(new_name_string, data + offset_start + stringOffset + nameRecord[i].offset_value, sizeof(char) * nameRecord[i].length);
 				uint16_t string_length = nameRecord[i].length;
 				if (new_name_string[0] == 0) {
 					string_length = string_length >> 1;
@@ -644,7 +646,7 @@ int8_t TTFFontParser::parse_data(const char* data, TTFFontParser::FontData* font
 		return -1;
 
 	bool* glyph_loaded = new bool[max_profile.numGlyphs];
-	memset(glyph_loaded, 0, sizeof(bool) * max_profile.numGlyphs);
+	std::memset(glyph_loaded, 0, sizeof(bool) * max_profile.numGlyphs);
 
 	auto parse_glyph = [&](uint16_t i, auto&& self) -> int8_t {
 		if (glyph_loaded[i] == true)
